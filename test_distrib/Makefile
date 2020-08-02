@@ -3,24 +3,26 @@ CC=gcc
 LIBDIR=../build
 INCDIR=../include
 
-TEST=test_testu01
+GENERATOR=generator
 LIB=randtools
 LIBFILE=lib$(LIB).so
 
+TEST=test_distribution.R
+
 all: run_test
 
-run_test: $(TEST)
+run_test: $(GENERATOR)
 	@echo "============================== RUN TEST =============================="
-	@./$(TEST)
+	@./$(GENERATOR)
 	@echo "======================================================================"
 
-$(TEST): $(LIBDIR)/$(LIBFILE)
-	$(CC) -L$(LIBDIR) -I$(INCDIR) -o $(TEST) $(TEST).c -ltestu01 -Wl,-rpath=$(LIBDIR) -l$(LIB)
+$(GENERATOR): $(LIBDIR)/$(LIBFILE)
+	$(CC) -L$(LIBDIR) -I$(INCDIR) -o $(GENERATOR) $(GENERATOR).c -Wl,-rpath=$(LIBDIR) -l$(LIB)
 
 $(LIBDIR)/$(LIBFILE):
 	make -C ..
 
 clean:
-	rm -rf *.o $(TEST)
+	rm -rf *.o $(GENERATOR)
 
 .PHONY: all $(EXE) default clean

@@ -10,14 +10,19 @@ PREFIX = /usr
 
 SRCS = $(shell find $(SRCDIR) -type f -name *.c)
 OBJS = $(patsubst $(SRCDIR)/%,$(OUTDIR)/%,$(SRCS:.c=.o))
-SHOBJS = $(patsubst $(SRCDIR)/%,$(OUTDIR)/lib%,$(SRCS:.c=.so))
 INC  = -I$(INCDIR)
 
-EXE=azerty
+LIB=randtools
+LIBFILE=lib$(LIB).so
 
-all: libs
+all: $(OUTDIR)/$(LIBFILE)
 
-libs: $(OBJS) $(SHOBJS)
+$(OUTDIR)/%.o: $(SRCDIR)/%.c
+	mkdir -p $(OUTDIR)
+	$(CC) -c $(CFLAGS) $(INC) $< -o $@
+
+$(OUTDIR)/$(LIBFILE): $(OBJS)
+	$(CC) $(CFLAGS) -shared -o $@ $^ -lm
 
 run_test:
 	make -C tests
@@ -25,22 +30,15 @@ run_test:
 run_rng_test:
 	make -C rng_tests
 
-exe: $(EXE)
+run_test_distrib:
+	make -C test_distrib
 
-$(EXE): $(OBJS)
-	$(CC) $(LDFLAGS) $^ -o $@
-
-$(OUTDIR)/%.o: $(SRCDIR)/%.c
-	mkdir -p $(OUTDIR)
-	$(CC) -c $(CFLAGS) $(INC) $< -o $@
-
-$(OUTDIR)/lib%.so: $(OUTDIR)/%.o
-	$(CC) $(CFLAGS) -shared -o $@ $<
 
 clean:
-	rm -rf $(OUTDIR) list_test
+	rm -rf $(OUTDIR)
 	make -C tests clean
 	make -C rng_tests clean
+	make -C test_distrib clean
 
 
 .PHONY: all default clean test

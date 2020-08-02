@@ -4,6 +4,7 @@
 #include <check.h>
 #include <time.h>
 
+#include "distrib.h"
 #include "rng.h"
 
 START_TEST(TEST_RNG) {
@@ -28,9 +29,20 @@ START_TEST(TEST_RNG_MEAN) {
 }
 END_TEST
 
+START_TEST(TEST_DISTRIB) {
+  Normal01();
+  Normal(0, 1);
+  Unifi(0, 100);
+  Unif01d();
+  Unifd(0, 100);
+  Bern(0.2);
+  Exp(1);
+}
+
 void test_rng(Suite *s) {
   TCase *tests = tcase_create("test rng");
   tcase_add_test(tests, TEST_RNG);
   tcase_add_test(tests, TEST_RNG_MEAN);
+  tcase_add_test(tests, TEST_DISTRIB);
   suite_add_tcase(s, tests);
 }
