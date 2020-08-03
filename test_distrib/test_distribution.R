@@ -5,6 +5,7 @@ options(warn=-1)
 suppressPackageStartupMessages(library("optparse"))
 suppressPackageStartupMessages(library("stats"))
 
+
 option_list <- list(
   make_option(c("-v", "--verbose"), action="store_true", default=FALSE,
               help="Print extra output [default]"),
@@ -45,10 +46,33 @@ if(opt$generator == "norm") {
   res = ks.test(x = u, y = "pnorm", mean = opt$mean, sd = opt$sd)
   # shapiro.test(u) # normalite
   # cat(sprintf('norm test : mean=%f, sd=%f\n', opt$mean, opt$sd))
+  if (opt$verbose){
+    pdf("Rplot.pdf", width=6,height=4)
+
+    plot(ecdf(u), main = "norm cumulative distribution function", lwd = 2, col = "grey")
+    x <- seq(opt$mean - opt$sd * 4, opt$mean + opt$sd * 4,  length.out=100)
+    lines(x, pnorm(x, opt$mean, opt$sd), lty = 2, lwd = 2, col = "magenta")
+    rug(u, col = "grey")
+    legend("topleft", c("emp", "th"), lty = 1:2, lwd = 2, col = c("grey", "magenta"), cex = 0.7)
+  }
 } else if (opt$generator == "unifd"){
   res = ks.test(x = u, y = "punif", opt$a, opt$b)
+  if (opt$verbose){
+    plot(ecdf(u), main = "unif cumulative distribution function", lwd = 2, col = "grey")
+    x <- seq(opt$a, opt$b,  length.out=100)
+    lines(x, punif(x, opt$a, opt$b), lty = 2, lwd = 2, col = "magenta")
+    rug(u, col = "grey")
+    legend("topleft", c("emp", "th"), lty = 1:2, lwd = 2, col = c("grey", "magenta"), cex = 0.7)
+  }
 } else if(opt$generator == "exp") {
   res = ks.test(x = u, "pexp", opt$lambda)
+  if (opt$verbose){
+    plot(ecdf(u), main = "exp cumulative distribution function", lwd = 2, col = "grey")
+    x <- seq(0, opt$lambda*3,  length.out=100)
+    lines(x, pexp(x, opt$lambda), lty = 2, lwd = 2, col = "magenta")
+    rug(u, col = "grey")
+    legend("topleft", c("emp", "th"), lty = 1:2, lwd = 2, col = c("grey", "magenta"), cex = 0.7)
+  }
 } else {
   cat("Generator not supported\n")
 }
