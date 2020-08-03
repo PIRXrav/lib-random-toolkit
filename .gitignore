@@ -53,3 +53,5 @@ Mkfile.old
 dkms.conf
 
 rng_tests/rng_test
+
+test_distrib/generator

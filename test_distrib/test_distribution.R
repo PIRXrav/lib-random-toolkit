@@ -10,10 +10,16 @@ option_list <- list(
               help="Print extra output [default]"),
   make_option("--generator", default="rnorm",
               help = "Theorical distribution [default \"%default\"]"),
-  make_option("--mean", default=0,
+  make_option("--mean", default=0,  metavar=" Mean",
               help="Mean if generator == \"rnorm\" [default %default]"),
-  make_option("--sd", default=1, metavar="standard deviation",
-              help="Standard deviation if generator == \"rnorm\" [default %default]")
+  make_option("--sd", default=0, metavar="standard deviation",
+              help="Standard deviation if generator == \"rnorm\" [default %default]"),
+  make_option("--a", default=0, metavar="a",
+              help="a if generator == \"unifd\" or \"unifi\" [default %default]"),
+  make_option("--b", default=0, metavar="b",
+              help="b if generator == \"unifd\" or \"unifi\" [default %default]"),
+  make_option("--lambda", default=0, metavar="Lambda",
+              help="Lambda if generator == \"exp\" [default %default]")
 )
 
 # get command line options
@@ -39,9 +45,10 @@ if(opt$generator == "norm") {
   res = ks.test(x = u, y = "pnorm", mean = opt$mean, sd = opt$sd)
   # shapiro.test(u) # normalite
   # cat(sprintf('norm test : mean=%f, sd=%f\n', opt$mean, opt$sd))
-
-} else if(opt$generator == "unif") {
-  print("exp test")
+} else if (opt$generator == "unifd"){
+  res = ks.test(x = u, y = "punif", opt$a, opt$b)
+} else if(opt$generator == "exp") {
+  res = ks.test(x = u, "pexp", opt$lambda)
 } else {
   cat("Generator not supported\n")
 }

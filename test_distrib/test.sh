@@ -10,6 +10,7 @@ sucess=0
 
 check_pval(){
   pval=$1
+  echo $pval
   if [ $(bc <<< "$pval >= $th") -ne 1 ]
   then
     echo -e "\e[31mFAIL\e[39m"
@@ -20,26 +21,35 @@ check_pval(){
   fi
 }
 
-test_norm(){
-  m=$1
-  s=$2
-  echo "Test N($m, $s) # $n --> "
-  check_pval $(
-    ./generator --generator=norm --mean=$m --sd=$s --n=$n |
-    ./test_distribution.R --generator=norm --mean=$m --sd=$s
-  )
+test(){
+  config=$@
+  printf "test $config --> "
+  check_pval $(./generator $config --n=$n | ./test_distribution.R $config)
 }
 
 # Begin tests
-test_norm 0 0.1
-test_norm 0 1
-test_norm 0 10
-test_norm 0 1000
-test_norm 10 1
-test_norm -100 10
-test_norm 1000 1
-test_norm -1000 100
-test_norm -1000 3.1415
+test --generator=norm --mean=0 --sd=1
+test --generator=norm --mean=0 --sd=10
+test --generator=norm --mean=0 --sd=1000
+test --generator=norm --mean=-100 --sd=10
+test --generator=norm --mean=1000 --sd=1
+test --generator=norm --mean=-1000 --sd=100
+test --generator=norm --mean=-1000 --sd=3.1415
+
+test --generator=unifd --a=0 --b=1
+test --generator=unifd --a=0.1 --b=0.2
+test --generator=unifd --a=10 --b=100
+test --generator=unifd --a=0.3 --b=3.1425
+test --generator=unifd --a=100000000 --b=100000001
+test --generator=unifd --a=0.0000001 --b=0.0000002
+
+test --generator=exp --lambda=1
+test --generator=exp --lambda=2
+test --generator=exp --lambda=10
+test --generator=exp --lambda=10000
+test --generator=exp --lambda=0.00001
+test --generator=exp --lambda=8.854187817e-12
+
 
 echo "--------------- summary ------------------"
 echo "sucess    : $sucess"
