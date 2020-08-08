@@ -34,6 +34,10 @@ run_test_distrib:
 	make -C test_distrib
 
 
+run_test_noise:
+	make -C test_noise
+
+
 clean:
 	rm -rf $(OUTDIR)
 	make -C tests clean
